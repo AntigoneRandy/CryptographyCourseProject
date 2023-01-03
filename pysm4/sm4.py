@@ -330,7 +330,7 @@ def _unhex(hex_str):
     return unhexlify(hex_str)
 
 # 电子密码本(ECB)
-def encrypt_ecb(plain_text, key):
+def encrypt_ecb(plain_text, key, mode):
     """
     SM4(ECB)加密
     :param plain_text: 明文
@@ -357,7 +357,7 @@ def encrypt_ecb(plain_text, key):
     return cipher_text if PY2 else cipher_text, (end - start)*1000 # .decode(E_FMT)
 
 
-def decrypt_ecb(cipher_text, key):
+def decrypt_ecb(cipher_text, key, mode):
     """
     SM4(ECB)解密
     :param cipher_text: 密文
@@ -384,7 +384,7 @@ def decrypt_ecb(cipher_text, key):
 
 
 # 密码块链接(CBC)
-def encrypt_cbc(plain_text, key, iv):
+def encrypt_cbc(plain_text, key, iv, mode):
     """
     SM4(CBC)加密
     :param plain_text: 明文
@@ -415,7 +415,7 @@ def encrypt_cbc(plain_text, key, iv):
     return cipher_text if PY2 else cipher_text, (end - start) * 1000  # .decode(E_FMT)
 
 
-def decrypt_cbc(cipher_text, key, iv):
+def decrypt_cbc(cipher_text, key, iv, mode):
     """
     SM4(CBC)解密
     :param cipher_text: 密文

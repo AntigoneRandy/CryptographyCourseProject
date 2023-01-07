@@ -1,11 +1,15 @@
-from PySide2.QtWidgets import QApplication, QMainWindow, QPushButton,  QComboBox, QTextBrowser, QFileDialog, QDialog, QLineEdit, QLabel
+from PySide2.QtWidgets import QApplication, QMainWindow, QPushButton,  QComboBox, QTextBrowser, QFileDialog, QDialog, QLineEdit, QLabel,\
+    QMessageBox
 from PySide2.QtCore import Signal
 from PySide2.QtCore import Qt
 from pysm4 import encrypt_cbc, decrypt_cbc, encrypt_ecb, decrypt_ecb
 import os, sys
+import magic
+from password_strength import PasswordStats
 
 default_iv = '111111111'
 currentpath = sys.path[0]
+naive_keys = ['123']
 
 class ChildWindow(QDialog):
     configSignal = Signal(list)
@@ -98,8 +102,11 @@ class ChildWindow(QDialog):
         mode = self.mode_choose.currentText()
         misapp_mode = self.misapp_choose.currentText()
         content = [self.filepath, self.dirpath, key, mode, misapp_mode]
-        self.configSignal.emit(content)
-        self.close()
+        if PasswordStats(key).strength() < 0.2:
+            QMessageBox.warning(self, '警告', '请输入更复杂的密钥')
+        else:
+            self.configSignal.emit(content)
+            self.close()
 
     def send_cancel(self):
         content = [None]
@@ -187,7 +194,8 @@ class Stats():
             f_result = open(connect[1], 'wb')
             f_result.write(result_text)
             f_result.close()
-            self.textbox.append("使用模式%s解密文件%s，用时%4fms，速度： %4fbyte/ms\n"%(connect[3], connect[0], using_time, speed))
+            file_type = magic.from_buffer(result_text)
+            self.textbox.append("使用模式%s解密文件%s，用时%4fms，速度： %4fbyte/ms，识别文件类型为：%s\n"%(connect[3], connect[0], using_time, speed, file_type))
 
 app = QApplication([])
 

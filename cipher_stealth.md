@@ -76,16 +76,16 @@ stealth 指 cipher stealth 密文挪用模式 。针对不同的工作模式（e
 
 #### cbc_stealth
 初始明文不填充，加密到n-1块，
-
+```python
     #generate cipher of 1 ~ n-1 block 
     for i in _range(len(plain_text) // BLOCK_BYTE):
         sub_hex = plain_hex[i * BLOCK_HEX:(i + 1) * BLOCK_HEX]
         cipher = encrypt(clear_num=(int(sub_hex, 16) ^ ivs[i]),
                          mk=int(_hex(key), 16))
         ivs.append(cipher)
-
+```
 将n-1块密文与短块直接异或补齐短块（由于异或操作数是int，因此用指数乘来移位）
-
+```python
     #generate cipher(int) of last block
     if len(plain_text) %BLOCK_BYTE != 0 :
 
@@ -102,9 +102,10 @@ stealth 指 cipher stealth 密文挪用模式 。针对不同的工作模式（e
                          mk=int(_hex(key), 16))
         #cipher = encrypt(short_block XOR block n-1)
         ivs.append(cipher)
-
+```
 计算短块密文，将第n-1块密文截取到短块长，
 产生密文
+```python
     #refresh cipher block n-1
     cipher_temp[-2] = cipher_temp[-2][0 : short_length]
 
@@ -112,3 +113,4 @@ stealth 指 cipher stealth 密文挪用模式 。针对不同的工作模式（e
     cipher_text = ''
     for c in cipher_temp:
         cipher_text += c
+```
